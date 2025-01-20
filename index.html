@@ -1,75 +1,301 @@
+<!DOCTYPE html>
+
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📚 Study Tracker</title>
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <!-- Tailwind CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>Pomodoro Timer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #ff6f61, #ffcc00);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #fff;
+      transition: background 0.3s ease;
+    }
+    .container {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      max-width: 500px;
+      width: 100%;
+    }
+    .timer {
+      font-size: 4rem;
+      font-weight: bold;
+      margin: 1rem 0;
+      animation: fadeIn 1s ease-in-out;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      margin: 1rem 0;
+      overflow: hidden;
+    }
+    .progress {
+      height: 100%;
+      background: #fff;
+      width: 100%;
+      transition: width 1s linear;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.4);
+      transform: scale(1.1);
+    }
+    .btn:active {
+      transform: scale(0.95);
+    }
+    .btn i {
+      margin-right: 0.5rem;
+    }
+    .task-list {
+      margin-top: 1rem;
+    }
+    .task-list input {
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: none;
+      margin-right: 0.5rem;
+    }
+    .task-list ul {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0;
+    }
+    .task-list li {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 0.5rem;
+      border-radius: 5px;
+      margin: 0.25rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .task-list li button {
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+    }
+    .dark-mode {
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+    }
+    .dark-mode .container {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    .dark-mode .btn {
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .dark-mode .btn:hover {
+      background: rgba(0, 0, 0, 0.4);
+    }
+    .dark-mode .task-list li {
+      background: rgba(0, 0, 0, 0.2);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-r from-purple-600 to-blue-500 text-white">
-  <div class="container mx-auto p-6 max-w-4xl bg-white bg-opacity-10 rounded-2xl shadow-2xl backdrop-blur-sm border border-white border-opacity-20">
-    <!-- Dark Mode Toggle Button -->
-    <button id="themeToggle" class="absolute top-6 right-6 p-2 bg-white bg-opacity-10 rounded-lg hover:bg-opacity-20 transition-all">
-      <i class="fas fa-moon text-white"></i>
-    </button>
-
-    <!-- Header -->
-    <header class="text-center mb-8">
-      <h1 class="text-4xl font-bold">📚 Study Tracker</h1>
-      <p class="text-lg opacity-80">Track your learning progress and stay motivated! 🚀</p>
-    </header>
-
-<!-- Subject Dropdown and Clear All Button -->
-<div class="flex items-center justify-center gap-4 mb-6">
-  <label for="subjectSelect" class="text-lg text-center mr-2">📖 Choose Subject:</label>
-  <select id="subjectSelect" class="p-2 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 focus:outline-none focus:border-white ml-2">
-    <option value="" disabled selected>Select a subject</option>
-    <option value="Anatomy">🧠 Anatomy</option>
-    <option value="Surgery">🔪 Surgery</option>
-    <option value="Internal Medicine">🩺 Internal Medicine</option>
-  </select>
-  <button id="clearAllButton" class="p-2 bg-red-500 rounded-lg hover:bg-red-600 transition-all ml-4">Clear All</button>
-</div>
-
-    <!-- Video Input Form -->
-    <div class="form-container mb-6" id="videoFormContainer" style="display: none;">
-      <form id="videoForm" class="flex flex-col gap-4">
-        <input type="text" id="videoTitle" placeholder="🎥 Enter video title" class="p-2 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 focus:outline-none focus:border-white">
-        <input type="number" id="videoDuration" placeholder="⏳ Duration (in minutes)" class="p-2 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 focus:outline-none focus:border-white">
-        <button type="submit" class="p-2 bg-purple-600 rounded-lg hover:bg-purple-700 transition-all">Add Video <i class="fas fa-plus"></i></button>
-      </form>
-
-      <!-- Bulk Insert -->
-      <div class="bulk-insert mt-4">
-        <textarea id="bulkInput" placeholder="📝 Enter videos in bulk (Format: Video title, duration)" class="w-full p-2 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 focus:outline-none focus:border-white"></textarea>
-        <button onclick="processBulkInput()" class="w-full p-2 bg-blue-500 rounded-lg hover:bg-blue-600 transition-all mt-2">Add Bulk Videos <i class="fas fa-upload"></i></button>
-      </div>
+<body>
+  <div class="container">
+    <div class="timer" id="timer">25:00</div>
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
     </div>
-
-    <!-- Progress Bar for Selected Subject -->
-    <div class="subject-progress-container mb-6" id="subjectProgressContainer" style="display: none;">
-      <h2 class="text-xl font-semibold mb-2">📊 Progress for <span id="selectedSubject"></span></h2>
-      <div class="w-full bg-white bg-opacity-20 rounded-full h-2.5">
-        <div class="bg-purple-600 h-2.5 rounded-full" id="subjectProgress"></div>
-      </div>
-      <p class="text-sm mt-1" id="subjectProgressText">0% completed</p>
+    <div class="controls">
+      <button class="btn" id="startBtn"><i class="fas fa-play"></i>Start</button>
+      <button class="btn" id="pauseBtn" disabled><i class="fas fa-pause"></i>Pause</button>
+      <button class="btn" id="resetBtn" disabled><i class="fas fa-redo"></i>Reset</button>
+      <button class="btn" id="fullscreenBtn"><i class="fas fa-expand"></i>Fullscreen</button>
+      <button class="btn" id="darkModeBtn"><i class="fas fa-moon"></i>Dark Mode</button>
     </div>
-
-    <!-- Video List -->
-    <div id="videoList" class="video-list"></div>
-
-    <!-- Overall Progress Bar -->
-    <div class="progress-container mt-6">
-      <h2 class="text-xl font-semibold mb-2">📊 Your Overall Progress</h2>
-      <div class="w-full bg-white bg-opacity-20 rounded-full h-2.5">
-        <div class="bg-purple-600 h-2.5 rounded-full" id="progress"></div>
-      </div>
-      <p class="text-sm mt-1" id="progressText">0% completed</p>
+    <div class="task-list">
+      <input type="text" id="taskInput" placeholder="Add a task">
+      <button class="btn" id="addTaskBtn"><i class="fas fa-plus"></i>Add</button>
+      <ul id="taskList"></ul>
+    </div>
+    <div id="sessionCounter">Sessions: 0</div>
+    <div class="custom-timer">
+      <input type="number" id="workDuration" placeholder="Work Duration (min)" min="1">
+      <input type="number" id="breakDuration" placeholder="Break Duration (min)" min="1">
+      <button class="btn" id="setCustomTimer"><i class="fas fa-cog"></i>Set Timer</button>
     </div>
   </div>
-  <script src="script.js"></script>
+
+  <script>
+    let timerInterval;
+    let timeLeft = 25 * 60;
+    let isWorkSession = true;
+    let sessionCount = 0;
+    const timerDisplay = document.getElementById('timer');
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const darkModeBtn = document.getElementById('darkModeBtn');
+    const taskInput = document.getElementById('taskInput');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const taskList = document.getElementById('taskList');
+    const sessionCounter = document.getElementById('sessionCounter');
+    const progress = document.getElementById('progress');
+    const workDuration = document.getElementById('workDuration');
+    const breakDuration = document.getElementById('breakDuration');
+    const setCustomTimer = document.getElementById('setCustomTimer');
+
+    function updateTimer() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      progress.style.width = `${(timeLeft / (isWorkSession ? parseInt(workDuration.value || 25) * 60 : parseInt(breakDuration.value || 5) * 60)) * 100}%`;
+      if (timeLeft === 0) {
+        clearInterval(timerInterval);
+        playSound();
+        if (isWorkSession) {
+          sessionCount++;
+          sessionCounter.textContent = `Sessions: ${sessionCount}`;
+          if (sessionCount % 4 === 0) {
+            timeLeft = 15 * 60;
+            alert('Take a long break!');
+          } else {
+            timeLeft = parseInt(breakDuration.value || 5) * 60;
+            alert('Take a short break!');
+          }
+        } else {
+          timeLeft = parseInt(workDuration.value || 25) * 60;
+          alert('Back to work!');
+        }
+        isWorkSession = !isWorkSession;
+        startTimer();
+      }
+      timeLeft--;
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(updateTimer, 1000);
+      startBtn.disabled = true;
+      pauseBtn.disabled = false;
+      resetBtn.disabled = false;
+    }
+
+    function pauseTimer() {
+      clearInterval(timerInterval);
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timeLeft = parseInt(workDuration.value || 25) * 60;
+      timerDisplay.textContent = `${String(Math.floor(timeLeft / 60)).padStart(2, '0')}:${String(timeLeft % 60).padStart(2, '0')}`;
+      progress.style.width = '100%';
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+      resetBtn.disabled = true;
+      isWorkSession = true;
+    }
+
+    function playSound() {
+      const audio = new Audio('https://www.soundjay.com/button/beep-07.wav');
+      audio.play();
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    function addTask() {
+      const taskText = taskInput.value.trim();
+      if (taskText) {
+        const li = document.createElement('li');
+        li.textContent = taskText;
+        const deleteBtn = document.createElement('button');
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+        deleteBtn.onclick = () => li.remove();
+        li.appendChild(deleteBtn);
+        taskList.appendChild(li);
+        taskInput.value = '';
+      }
+    }
+
+    function setCustomTimerHandler() {
+      const workTime = parseInt(workDuration.value) * 60;
+      const breakTime = parseInt(breakDuration.value) * 60;
+      if (workTime > 0 && breakTime > 0) {
+        timeLeft = workTime;
+        timerDisplay.textContent = `${String(Math.floor(timeLeft / 60)).padStart(2, '0')}:${String(timeLeft % 60).padStart(2, '0')}`;
+        progress.style.width = '100%';
+        resetTimer();
+      } else {
+        alert('Please enter valid durations for work and break.');
+      }
+    }
+
+    startBtn.addEventListener('click', startTimer);
+    pauseBtn.addEventListener('click', pauseTimer);
+    resetBtn.addEventListener('click', resetTimer);
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    darkModeBtn.addEventListener('click', toggleDarkMode);
+    addTaskBtn.addEventListener('click', addTask);
+    taskInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addTask();
+    });
+    setCustomTimer.addEventListener('click', setCustomTimerHandler);
+
+    // Save state to localStorage
+    window.addEventListener('beforeunload', () => {
+      localStorage.setItem('timeLeft', timeLeft);
+      localStorage.setItem('isWorkSession', isWorkSession);
+      localStorage.setItem('sessionCount', sessionCount);
+      localStorage.setItem('tasks', taskList.innerHTML);
+    });
+
+    // Load state from localStorage
+    window.addEventListener('load', () => {
+      timeLeft = parseInt(localStorage.getItem('timeLeft')) || 25 * 60;
+      isWorkSession = localStorage.getItem('isWorkSession') === 'true';
+      sessionCount = parseInt(localStorage.getItem('sessionCount')) || 0;
+      taskList.innerHTML = localStorage.getItem('tasks') || '';
+      sessionCounter.textContent = `Sessions: ${sessionCount}`;
+      updateTimer();
+    });
+  </script>
 </body>
-</html>
+</html
+>
